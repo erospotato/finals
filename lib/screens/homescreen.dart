@@ -9,6 +9,7 @@ import 'favorite_screen.dart';
 import 'travel_screen.dart';
 import 'profile_screen.dart';
 import 'product_detail_screen.dart';
+import '../widgets/free_shipping_banner.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -74,6 +75,8 @@ class _HomeScreenState extends State<HomeScreen> {
         onWishlistToggle: _toggleWishlist,
         onRetry: _retry,
       ),
+
+      SliverToBoxAdapter(child: const FreeShippingBanner()),
     ],
   );
 
