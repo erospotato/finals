@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import '../constants/app_colors.dart';
-import '../constants/app_text_styles.dart';
 
 class PromoBanner extends StatelessWidget {
   final String tag;
@@ -21,111 +19,136 @@ class PromoBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+
       child: Container(
-        height: 175,
+        height: 180,
+
         decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
           gradient: const LinearGradient(
-            colors: [AppColors.primaryLight, AppColors.primaryMid],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
+            colors: [Color(0xFFEAF2FF), Color(0xFFDDE9FF)],
           ),
-          borderRadius: BorderRadius.circular(20),
         ),
-        child: Stack(
-          children: [
-            Positioned(
-              right: 0,
-              top: 0,
-              bottom: 0,
-              child: ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  topRight: Radius.circular(20),
-                  bottomRight: Radius.circular(20),
-                ),
-                child: Container(
-                  width: 140,
-                  color: const Color(0xFFFEF08A),
-                  padding: const EdgeInsets.all(12),
-                  child: Image.network(
-                    imageUrl,
-                    fit: BoxFit.contain,
-                    loadingBuilder: (_, child, progress) {
-                      if (progress == null) return child;
-                      return const Center(
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: AppColors.primary,
-                        ),
-                      );
-                    },
-                    errorBuilder: (_, __, ___) => Image.network(
-                      'https://images.unsplash.com/photo-1505740420928-5e560c06d30e'
-                      '?w=300&q=80',
-                      fit: BoxFit.contain,
-                      errorBuilder: (_, __, ___) => const Icon(
-                        Icons.headphones,
-                        size: 60,
-                        color: Colors.black38,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
 
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 16, 150, 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    tag,
-                    style: AppTextStyles.chipLabel.copyWith(
-                      color: AppColors.primary,
-                      fontSize: 12,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    headline,
-                    style: AppTextStyles.heading1.copyWith(
-                      fontSize: 20,
-                      color: const Color(0xFF1E3A5F),
-                      height: 1.2,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(subtext, style: AppTextStyles.bodySmall),
-                  const SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: onShopNow,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: AppColors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+
+          child: Row(
+            children: [
+              Expanded(
+                flex: 3,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 18, 12, 18),
+
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+
+                    children: [
+                      Text(
+                        tag,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF4F46E5),
+                        ),
                       ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
+
+                      const SizedBox(height: 10),
+
+                      Text(
+                        headline,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF1E293B),
+                          height: 1.1,
+                        ),
                       ),
-                      elevation: 0,
-                      minimumSize: Size.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      textStyle: AppTextStyles.bodyMedium.copyWith(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 13,
+
+                      const SizedBox(height: 8),
+
+                      Text(
+                        subtext,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: 14, color: Colors.grey),
                       ),
-                    ),
-                    child: const Text('Shop Now'),
+
+                      const SizedBox(height: 14),
+
+                      SizedBox(
+                        height: 40,
+                        child: ElevatedButton(
+                          onPressed: onShopNow,
+                          style: ElevatedButton.styleFrom(
+                            elevation: 0,
+                            backgroundColor: const Color(0xFF4F46E5),
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                          ),
+                          child: const Text("Shop Now"),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ],
+
+              Expanded(
+                flex: 2, // slightly reduce image dominance (prevents overflow)
+
+                child: Container(
+                  alignment: Alignment.centerRight,
+                  padding: const EdgeInsets.only(right: 10),
+
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                      topRight: Radius.circular(24),
+                      bottomRight: Radius.circular(24),
+                    ),
+
+                    child: AspectRatio(
+                      aspectRatio:
+                          1, // 🔥 keeps image from exploding vertically
+
+                      child: Image.network(
+                        imageUrl,
+
+                        fit: BoxFit.contain,
+
+                        loadingBuilder: (context, child, progress) {
+                          if (progress == null) return child;
+
+                          return const Center(
+                            child: SizedBox(
+                              width: 22,
+                              height: 22,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          );
+                        },
+
+                        errorBuilder: (context, error, stackTrace) {
+                          return Image.network(
+                            "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400",
+                            fit: BoxFit.contain,
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

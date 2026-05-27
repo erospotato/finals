@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_text_styles.dart';
 import '../models/product.dart';
-
 import '../widgets/product_card.dart';
 import '../widgets/promo_banner.dart';
+import 'favorite_screen.dart';
+import 'travel_screen.dart';
+import 'profile_screen.dart';
 import 'product_detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -18,217 +20,242 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late Future<List<Product>> _productsFuture;
   final Set<int> _wishlist = {};
-  int _selectedNavIndex = 0;
-  final _searchController = TextEditingController();
+  int _currentIndex = 0;
+  late final List<Widget> _screens;
 
   @override
   void initState() {
     super.initState();
     _productsFuture = ApiService.fetchAll();
+    _screens = [
+      _shopBody,
+      const FavoriteScreen(),
+      const TravelScreen(),
+      const ProfileScreen(),
+    ];
   }
 
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
+  void _toggleWishlist(int id) {
+    setState(() {
+      _wishlist.contains(id) ? _wishlist.remove(id) : _wishlist.add(id);
+    });
   }
 
-  void _toggleWishlist(int id) => setState(
-    () => _wishlist.contains(id) ? _wishlist.remove(id) : _wishlist.add(id),
+  void _retry() {
+    setState(() {
+      _productsFuture = ApiService.fetchAll();
+    });
+  }
+
+  Widget get _shopBody => CustomScrollView(
+    slivers: [
+      SliverToBoxAdapter(child: const _Header()),
+
+      SliverToBoxAdapter(child: const _SearchBar()),
+
+      SliverToBoxAdapter(
+        child: PromoBanner(
+          tag: 'Summer Sale',
+          headline: 'Up to 50% OFF',
+          subtext: 'On selected items',
+
+          imageUrl:
+              "https://images.unsplash.com/photo-1518441902117-f0a8a1d1f0e3",
+
+          onShopNow: () {},
+        ),
+      ),
+
+      SliverToBoxAdapter(child: const _SectionTitle(title: 'Popular Products')),
+
+      _ProductGrid(
+        future: _productsFuture,
+        wishlist: _wishlist,
+        onWishlistToggle: _toggleWishlist,
+        onRetry: _retry,
+      ),
+    ],
   );
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgPage,
-      bottomNavigationBar: _buildBottomNav(),
+
       body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(child: _buildHeader()),
-            SliverToBoxAdapter(child: _buildSearchBar()),
-            SliverToBoxAdapter(
-              child: PromoBanner(
-                tag: 'Summer Sale',
-                headline: 'Up to 50% OFF',
-                subtext: 'On selected items',
-                imageUrl:
-                    'https://fakestoreapi.com/img/61IBBVJvSDL._AC_SY879_.jpg',
-                onShopNow: () {},
-              ),
-            ),
-            SliverToBoxAdapter(child: _buildSectionTitle('Popular Products')),
-            _buildProductGrid(),
-          ],
-        ),
+        child: IndexedStack(index: _currentIndex, children: _screens),
+      ),
+
+      bottomNavigationBar: _BottomNav(
+        selectedIndex: _currentIndex,
+
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
       ),
     );
   }
+}
 
-  Widget _buildHeader() {
+class _Header extends StatelessWidget {
+  const _Header();
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 4),
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
+
               children: [
                 Row(
-                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Flexible(
-                      child: Text(
-                        'Hello, Ratha ',
-                        style: AppTextStyles.heading1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
+                    Text('Hello, Ratha ', style: AppTextStyles.heading1),
+
                     const Text('👋', style: TextStyle(fontSize: 22)),
                   ],
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  'Find your best product',
-                  style: AppTextStyles.bodySmall,
-                  overflow: TextOverflow.ellipsis,
-                ),
+
+                const SizedBox(height: 4),
+
+                Text('Find your best product', style: AppTextStyles.bodySmall),
               ],
             ),
           ),
-          const SizedBox(width: 8),
 
-          SizedBox(
-            width: 40,
-            height: 40,
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(12),
-                    onTap: () {},
-                    child: const Icon(
-                      Icons.notifications_outlined,
-                      size: 26,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
+          Stack(
+            clipBehavior: Clip.none,
+
+            children: [
+              IconButton(
+                onPressed: () {},
+
+                icon: const Icon(
+                  Icons.notifications_outlined,
+                  color: AppColors.textSecondary,
                 ),
-                Positioned(
-                  right: -2,
-                  top: -2,
-                  child: Container(
-                    width: 16,
-                    height: 16,
-                    decoration: const BoxDecoration(
-                      color: AppColors.danger,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Center(
-                      child: Text(
-                        '3',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 9,
-                          fontWeight: FontWeight.bold,
-                        ),
+              ),
+
+              Positioned(
+                right: 8,
+                top: 6,
+
+                child: Container(
+                  width: 16,
+                  height: 16,
+
+                  decoration: const BoxDecoration(
+                    color: Colors.red,
+                    shape: BoxShape.circle,
+                  ),
+
+                  child: const Center(
+                    child: Text(
+                      '3',
+
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 9,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-          const SizedBox(width: 12),
+
+          const SizedBox(width: 8),
 
           CircleAvatar(
             radius: 22,
-            backgroundColor: AppColors.primary,
-            child: ClipOval(
-              child: Image.network(
-                'https://i.pravatar.cc/100?img=12',
-                width: 44,
-                height: 44,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) =>
-                    const Icon(Icons.person, color: Colors.white),
-              ),
+
+            backgroundImage: const NetworkImage(
+              'https://i.pravatar.cc/100?img=12',
             ),
+
+            onBackgroundImageError: (_, __) {},
           ),
         ],
       ),
     );
   }
+}
 
-  Widget _buildSearchBar() {
+class _SearchBar extends StatelessWidget {
+  const _SearchBar();
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      child: Row(
-        children: [
-          Expanded(
-            child: Container(
-              height: 48,
-              decoration: BoxDecoration(
-                color: AppColors.white,
-                borderRadius: BorderRadius.circular(14),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  hintText: 'Search products...',
-                  hintStyle: AppTextStyles.hint,
-                  prefixIcon: const Icon(
-                    Icons.search,
-                    color: AppColors.textHint,
-                    size: 20,
-                  ),
-                  border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(vertical: 14),
-                ),
-              ),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+
+      child: Container(
+        height: 50,
+
+        decoration: BoxDecoration(
+          color: Colors.white,
+
+          borderRadius: BorderRadius.circular(14),
+
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x14000000),
+              blurRadius: 10,
+              offset: Offset(0, 2),
             ),
+          ],
+        ),
+
+        child: const TextField(
+          decoration: InputDecoration(
+            hintText: 'Search products...',
+
+            border: InputBorder.none,
+
+            prefixIcon: Icon(Icons.search, color: Colors.grey),
+
+            suffixIcon: Icon(Icons.tune_rounded, color: Colors.grey),
+
+            contentPadding: EdgeInsets.symmetric(vertical: 14),
           ),
-          const SizedBox(width: 12),
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: AppColors.primary,
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: const Icon(Icons.tune, color: Colors.white, size: 20),
-          ),
-        ],
+        ),
       ),
     );
   }
+}
 
-  Widget _buildSectionTitle(String title) {
+class _SectionTitle extends StatelessWidget {
+  final String title;
+
+  const _SectionTitle({required this.title});
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
         children: [
           Text(title, style: AppTextStyles.heading2),
+
           TextButton(
             onPressed: () {},
+
             child: const Text(
               'See all',
+
               style: TextStyle(
                 color: AppColors.primary,
                 fontWeight: FontWeight.w600,
-                fontSize: 13,
               ),
             ),
           ),
@@ -236,81 +263,80 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+}
 
-  Widget _buildProductGrid() {
+class _ProductGrid extends StatelessWidget {
+  final Future<List<Product>> future;
+
+  final Set<int> wishlist;
+
+  final ValueChanged<int> onWishlistToggle;
+
+  final VoidCallback onRetry;
+
+  const _ProductGrid({
+    required this.future,
+    required this.wishlist,
+    required this.onWishlistToggle,
+    required this.onRetry,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return FutureBuilder<List<Product>>(
-      future: _productsFuture,
+      future: future,
+
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const SliverToBoxAdapter(
             child: SizedBox(
               height: 300,
-              child: Center(
-                child: CircularProgressIndicator(color: AppColors.primary),
-              ),
-            ),
-          );
-        }
-        if (snapshot.hasError) {
-          return SliverToBoxAdapter(
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(32),
-                child: Column(
-                  children: [
-                    const Icon(
-                      Icons.wifi_off_rounded,
-                      size: 48,
-                      color: AppColors.navIcon,
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'Failed to load products.\nCheck your connection.',
-                      textAlign: TextAlign.center,
-                      style: AppTextStyles.bodySmall,
-                    ),
-                    const SizedBox(height: 16),
-                    ElevatedButton.icon(
-                      onPressed: () => setState(
-                        () => _productsFuture = ApiService.fetchAll(),
-                      ),
-                      icon: const Icon(Icons.refresh),
-                      label: const Text('Retry'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+
+              child: Center(child: CircularProgressIndicator()),
             ),
           );
         }
 
+        if (snapshot.hasError) {
+          return SliverToBoxAdapter(child: _ErrorState(onRetry: onRetry));
+        }
+
         final products = snapshot.data!;
+
         return SliverPadding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+          padding: const EdgeInsets.all(16),
+
           sliver: SliverGrid(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) => ProductCard(
-                product: products[index],
-                isWishlisted: _wishlist.contains(products[index].id),
-                onWishlistToggle: () => _toggleWishlist(products[index].id),
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) =>
-                        ProductDetailScreen(product: products[index]),
-                  ),
-                ),
-              ),
-              childCount: products.length,
-            ),
+            delegate: SliverChildBuilderDelegate((context, index) {
+              final product = products[index];
+
+              return ProductCard(
+                product: product,
+
+                isWishlisted: wishlist.contains(product.id),
+
+                onWishlistToggle: () {
+                  onWishlistToggle(product.id);
+                },
+
+                onTap: () {
+                  Navigator.push(
+                    context,
+
+                    MaterialPageRoute(
+                      builder: (_) => ProductDetailScreen(product: product),
+                    ),
+                  );
+                },
+              );
+            }, childCount: products.length),
+
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
+
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
+
               childAspectRatio: 0.72,
             ),
           ),
@@ -318,31 +344,79 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
   }
+}
 
-  Widget _buildBottomNav() {
-    return BottomNavigationBar(
-      currentIndex: _selectedNavIndex,
-      onTap: (i) => setState(() => _selectedNavIndex = i),
-      type: BottomNavigationBarType.fixed,
-      selectedItemColor: AppColors.primary,
-      unselectedItemColor: AppColors.navIcon,
-      backgroundColor: AppColors.white,
-      elevation: 12,
-      selectedLabelStyle: const TextStyle(
-        fontWeight: FontWeight.w600,
-        fontSize: 11,
+class _ErrorState extends StatelessWidget {
+  final VoidCallback onRetry;
+
+  const _ErrorState({required this.onRetry});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(32),
+
+      child: Column(
+        children: [
+          const Icon(Icons.wifi_off_rounded, size: 48, color: Colors.grey),
+
+          const SizedBox(height: 12),
+
+          Text(
+            'Failed to load products.\nCheck your connection.',
+
+            textAlign: TextAlign.center,
+
+            style: AppTextStyles.bodySmall,
+          ),
+
+          const SizedBox(height: 16),
+
+          ElevatedButton.icon(
+            onPressed: onRetry,
+
+            icon: const Icon(Icons.refresh),
+
+            label: const Text('Retry'),
+          ),
+        ],
       ),
-      unselectedLabelStyle: const TextStyle(fontSize: 11),
+    );
+  }
+}
+
+class _BottomNav extends StatelessWidget {
+  final int selectedIndex;
+
+  final ValueChanged<int> onTap;
+
+  const _BottomNav({required this.selectedIndex, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return BottomNavigationBar(
+      currentIndex: selectedIndex,
+
+      onTap: onTap,
+
+      type: BottomNavigationBarType.fixed,
+
+      selectedItemColor: AppColors.primary,
+      unselectedItemColor: Colors.grey,
+
       items: const [
         BottomNavigationBarItem(icon: Icon(Icons.home_rounded), label: 'Home'),
+
         BottomNavigationBarItem(
           icon: Icon(Icons.favorite_border_rounded),
-          label: 'Wishlist',
+          label: 'Favourite',
         ),
+
         BottomNavigationBarItem(
-          icon: Icon(Icons.shopping_cart_outlined),
-          label: 'Cart',
+          icon: Icon(Icons.card_travel_outlined),
+          label: 'Travel',
         ),
+
         BottomNavigationBarItem(
           icon: Icon(Icons.person_outline_rounded),
           label: 'Profile',

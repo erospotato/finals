@@ -33,10 +33,7 @@ class AppTextStyles {
     color: AppColors.textSecondary,
   );
 
-  static const hint = TextStyle(
-    fontSize: 14,
-    color: AppColors.textHint,
-  );
+  static const hint = TextStyle(fontSize: 14, color: AppColors.textHint);
 
   static const priceLabel = TextStyle(
     fontSize: 14,
