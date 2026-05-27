@@ -53,7 +53,7 @@ class PromoBanner extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
-                          color: Color(0xFF4F46E5),
+                          color: Color.fromARGB(255, 0, 94, 255),
                         ),
                       ),
 
@@ -66,7 +66,7 @@ class PromoBanner extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF1E293B),
+                          color: Colors.black,
                           height: 1.1,
                         ),
                       ),
@@ -77,7 +77,7 @@ class PromoBanner extends StatelessWidget {
                         subtext,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 14, color: Colors.grey),
+                        style: TextStyle(fontSize: 14, color: const Color.fromARGB(255, 114, 114, 114)),
                       ),
 
                       const SizedBox(height: 14),
@@ -88,7 +88,7 @@ class PromoBanner extends StatelessWidget {
                           onPressed: onShopNow,
                           style: ElevatedButton.styleFrom(
                             elevation: 0,
-                            backgroundColor: const Color(0xFF4F46E5),
+                            backgroundColor: Color.fromARGB(255, 0, 94, 255),
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(14),

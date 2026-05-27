@@ -63,7 +63,7 @@ class ProductCard extends StatelessWidget {
                     ),
                   );
                 },
-                errorBuilder: (_, __, ___) => const Center(
+                errorBuilder: (_, _, _) => const Center(
                   child: Icon(
                     Icons.image_not_supported_outlined,
                     color: Colors.grey,
@@ -112,7 +112,7 @@ class ProductCard extends StatelessWidget {
             product.title,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: AppTextStyles.heading3.copyWith(fontSize: 12, height: 1.4),
+            style: AppTextStyles.heading3.copyWith(fontSize: 15, height: 1.5),
           ),
           const SizedBox(height: 6),
 
@@ -127,7 +127,7 @@ class ProductCard extends StatelessWidget {
                 children: [
                   const Icon(
                     Icons.star_rounded,
-                    size: 13,
+                    size: 16,
                     color: AppColors.accent,
                   ),
                   const SizedBox(width: 2),
@@ -135,7 +135,7 @@ class ProductCard extends StatelessWidget {
                     product.rating.toStringAsFixed(1),
                     style: AppTextStyles.bodySmall.copyWith(
                       fontWeight: FontWeight.w500,
-                      fontSize: 11,
+                      fontSize: 16,
                     ),
                   ),
                 ],

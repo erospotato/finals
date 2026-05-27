@@ -58,7 +58,6 @@ class _HomeScreenState extends State<HomeScreen> {
           tag: 'Summer Sale',
           headline: 'Up to 50% OFF',
           subtext: 'On selected items',
-
           imageUrl:
               "https://images.unsplash.com/photo-1518441902117-f0a8a1d1f0e3",
 
@@ -85,10 +84,8 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SafeArea(
         child: IndexedStack(index: _currentIndex, children: _screens),
       ),
-
       bottomNavigationBar: _BottomNav(
         selectedIndex: _currentIndex,
-
         onTap: (index) {
           setState(() {
             _currentIndex = index;
@@ -112,18 +109,14 @@ class _Header extends StatelessWidget {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-
               children: [
                 Row(
                   children: [
-                    Text('Hello, Ratha ', style: AppTextStyles.heading1),
-
+                    Text('Hello, Molly! ', style: AppTextStyles.heading1),
                     const Text('👋', style: TextStyle(fontSize: 22)),
                   ],
                 ),
-
                 const SizedBox(height: 4),
-
                 Text('Find your best product', style: AppTextStyles.bodySmall),
               ],
             ),
@@ -131,34 +124,30 @@ class _Header extends StatelessWidget {
 
           Stack(
             clipBehavior: Clip.none,
-
             children: [
               IconButton(
                 onPressed: () {},
-
+                iconSize: 32,
                 icon: const Icon(
                   Icons.notifications_outlined,
+
                   color: AppColors.textSecondary,
                 ),
               ),
 
               Positioned(
-                right: 8,
+                right: 5,
                 top: 6,
-
                 child: Container(
-                  width: 16,
-                  height: 16,
-
+                  width: 18,
+                  height: 20,
                   decoration: const BoxDecoration(
                     color: Colors.red,
                     shape: BoxShape.circle,
                   ),
-
                   child: const Center(
                     child: Text(
                       '3',
-
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 9,
@@ -172,15 +161,12 @@ class _Header extends StatelessWidget {
           ),
 
           const SizedBox(width: 8),
-
           CircleAvatar(
             radius: 22,
-
             backgroundImage: const NetworkImage(
-              'https://i.pravatar.cc/100?img=12',
+              'https://i.pinimg.com/736x/e1/94/44/e194443af7e95c8c729c9f1c24d5664f.jpg',
             ),
-
-            onBackgroundImageError: (_, __) {},
+            onBackgroundImageError: (_, _) {},
           ),
         ],
       ),
@@ -198,16 +184,13 @@ class _SearchBar extends StatelessWidget {
 
       child: Container(
         height: 50,
-
         decoration: BoxDecoration(
           color: Colors.white,
-
           borderRadius: BorderRadius.circular(14),
-
           boxShadow: const [
             BoxShadow(
-              color: Color(0x14000000),
-              blurRadius: 10,
+              color: Colors.black,
+              blurRadius: 2,
               offset: Offset(0, 2),
             ),
           ],
@@ -216,13 +199,9 @@ class _SearchBar extends StatelessWidget {
         child: const TextField(
           decoration: InputDecoration(
             hintText: 'Search products...',
-
             border: InputBorder.none,
-
             prefixIcon: Icon(Icons.search, color: Colors.grey),
-
             suffixIcon: Icon(Icons.tune_rounded, color: Colors.grey),
-
             contentPadding: EdgeInsets.symmetric(vertical: 14),
           ),
         ),
