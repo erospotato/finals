@@ -1,13 +1,13 @@
-import 'package:flutter/material.dart';
-class TravelScreen extends StatelessWidget {
-  const TravelScreen({super.key});
+// import 'package:flutter/material.dart';
+// class TravelScreen extends StatelessWidget {
+//   const TravelScreen({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Center(
-        child: Text("Travel Screen"),
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       child: Center(
+//         child: Text("Travel Screen"),
+//       ),
+//     );
+//   }
+// }
